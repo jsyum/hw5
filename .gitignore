@@ -1,0 +1,24 @@
+# Secrets: the real .env is never committed (use .env.example as the template)
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / Vite
+node_modules/
+frontend/dist/
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# NOTE: data/ is intentionally NOT ignored. Both data/campus_customs.db (original)
+# and data/campus_customs_new.db (working copy) are part of the submission.

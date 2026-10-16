@@ -1,0 +1,833 @@
+{
+  "problem": "Problem 4: Add the MCP server to the vibe coder and test each tool",
+  "mcp_server": {
+    "name": "campus-customs",
+    "config": ".mcp.json",
+    "database": "data/campus_customs_new.db"
+  },
+  "shop_date": "2026-08-31",
+  "all_tools_connected_and_callable": true,
+  "tests": [
+    {
+      "ticket_id": 101,
+      "prompt": "Using the Campus Customs MCP tools, can we fill ticket 101's order right now? If not, tell me what's short and what's preventing the restock.",
+      "tool": "mcp__campus-customs__check_order_fulfillment",
+      "arguments": {
+        "ticket_id": 101
+      },
+      "output": {
+        "shop_date": "2026-08-31",
+        "ticket": {
+          "id": 101,
+          "type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty": 1,
+          "lease_id": null,
+          "invoice_id": 501,
+          "status": "open",
+          "notes": "Needs a tee in size S.",
+          "created_at": "2026-08-31T09:15:00-04:00"
+        },
+        "requested_qty": 1,
+        "stock_for_requested_size": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        },
+        "on_hand_qty": 0,
+        "can_fill_from_stock": false,
+        "shortfall_qty": 1,
+        "other_sizes_in_stock": [
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "L",
+            "qty": 3,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "M",
+            "qty": 5,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "XL",
+            "qty": 2,
+            "location": "Aisle B"
+          }
+        ],
+        "linked_invoice": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840,
+          "due_date": "2026-08-28",
+          "status": "open",
+          "description": "Rush reprint CC-TEE-WHITE S",
+          "days_overdue": 3,
+          "vendor": {
+            "id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5,
+            "blocked_from_dispatch": true,
+            "unpaid_invoices": [
+              {
+                "id": 501,
+                "vendor_id": 1,
+                "amount": 840,
+                "due_date": "2026-08-28",
+                "status": "open",
+                "description": "Rush reprint CC-TEE-WHITE S",
+                "days_overdue": 3
+              }
+            ]
+          }
+        }
+      },
+      "answer": "No. The order needs 1 x CC-TEE-WHITE size S and size S stock is 0, so the shortfall is 1. The restock depends on vendor 1 Bulldog Print Co (5-day lead time), which is blocked from dispatching by unpaid invoice 501 for 840.00, due 2026-08-28 and 3 days overdue as of 2026-08-31."
+    },
+    {
+      "ticket_id": 102,
+      "prompt": "Using the Campus Customs MCP tools, how much rent does ticket 102 ask for? When is it due relative to the shop's current date and can our checking account cover it?",
+      "tool": "mcp__campus-customs__check_rent_obligation",
+      "arguments": {
+        "ticket_id": 102
+      },
+      "output": {
+        "shop_date": "2026-08-31",
+        "ticket": {
+          "id": 102,
+          "type": "rent_notice",
+          "requester": "Elm City Properties",
+          "subject": "Rent due",
+          "sku": null,
+          "size": null,
+          "qty": null,
+          "lease_id": 1,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Email: shop rent due in 2 days.",
+          "created_at": "2026-08-31T11:05:00-04:00"
+        },
+        "lease": {
+          "id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400,
+          "next_due": "2026-09-02",
+          "notes": null
+        },
+        "amount_due": 2400,
+        "next_due": "2026-09-02",
+        "days_until_due": 2,
+        "is_overdue": false,
+        "cash_accounts": [
+          {
+            "name": "checking",
+            "balance": 3400,
+            "date": "2026-08-31",
+            "can_cover_rent": true,
+            "balance_after_rent": 1000
+          }
+        ],
+        "total_cash": 3400
+      },
+      "answer": "Rent is 2400.00 for lease 1 (Chapel Street shop, landlord Elm City Properties). It is due 2026-09-02, which is 2 days after the shop date 2026-08-31, so it is not overdue. The checking account balance of 3400.00 can cover it, leaving 1000.00."
+    },
+    {
+      "ticket_id": 103,
+      "prompt": "Using the Campus Customs MCP tools, evaluate ticket 103's bulk request at a proposed price of $48 per hoodie. What's the margin? How many are we short? Which vendor could cover the shortage?",
+      "tool": "mcp__campus-customs__evaluate_bulk_discount_request",
+      "arguments": {
+        "ticket_id": 103,
+        "proposed_unit_price": 48
+      },
+      "output": {
+        "shop_date": "2026-08-31",
+        "ticket": {
+          "id": 103,
+          "type": "price_override",
+          "requester": "Yale AI Club",
+          "subject": "Bulk hoodie discount",
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "qty": 20,
+          "lease_id": null,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+          "created_at": "2026-08-31T16:55:00-04:00"
+        },
+        "requested_qty": 20,
+        "pricing": {
+          "unit_cost": 22,
+          "list_price": 58,
+          "margin_per_unit_at_list": 36,
+          "margin_pct_at_list": 62.07,
+          "order_cost_total": 440,
+          "order_revenue_at_list": 1160,
+          "break_even_unit_price": 22,
+          "proposed_unit_price": 48,
+          "discount_pct_vs_list": 17.24,
+          "margin_per_unit_at_proposed": 26,
+          "order_revenue_at_proposed": 960,
+          "order_margin_at_proposed": 520,
+          "proposed_price_above_cost": true
+        },
+        "stock_for_requested_size": {
+          "sku": "CC-HOOD-NAVY",
+          "name": "Basic Hoodie Big Yale",
+          "size": "M",
+          "qty": 8,
+          "location": "Aisle A"
+        },
+        "on_hand_qty": 8,
+        "can_fill_from_stock": false,
+        "shortfall_qty": 12,
+        "other_sizes_in_stock": [
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "L",
+            "qty": 14,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "S",
+            "qty": 4,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "XL",
+            "qty": 6,
+            "location": "Aisle A"
+          }
+        ],
+        "vendors": [
+          {
+            "id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5,
+            "blocked_from_dispatch": true,
+            "unpaid_invoices": [
+              {
+                "id": 501,
+                "vendor_id": 1,
+                "amount": 840,
+                "due_date": "2026-08-28",
+                "status": "open",
+                "description": "Rush reprint CC-TEE-WHITE S",
+                "days_overdue": 3
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Elm City Gifts",
+            "specialty": "mugs and small goods",
+            "lead_days": 3,
+            "blocked_from_dispatch": false,
+            "unpaid_invoices": []
+          },
+          {
+            "id": 3,
+            "name": "QuickShip CT",
+            "specialty": "local courier",
+            "lead_days": 1,
+            "blocked_from_dispatch": false,
+            "unpaid_invoices": []
+          }
+        ]
+      },
+      "answer": "At 48.00 per hoodie (17.24% below list 58.00) the margin is 26.00 per unit over unit cost 22.00, or 520.00 on 20 units, versus 36.00 per unit at list. Stock in size M is 8, so 12 are short. The only vendor whose specialty is apparel is vendor 1 Bulldog Print Co (5-day lead), but it is blocked from dispatching by unpaid invoice 501. Vendors 2 (mugs and small goods) and 3 (local courier) are unblocked but are not apparel suppliers."
+    }
+  ],
+  "verification": {
+    "method": "Each recorded output was compared field by field against data/campus_customs_new.db (read-only) and derived values were recomputed from the database rows.",
+    "checks_passed": 42,
+    "checks_total": 42,
+    "all_match": true,
+    "checks": [
+      {
+        "check": "101.shop_date == desk.date_today",
+        "expected_from_db": "2026-08-31",
+        "recorded_in_output": "2026-08-31",
+        "match": true
+      },
+      {
+        "check": "101.ticket == tickets row 101",
+        "expected_from_db": {
+          "id": 101,
+          "type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty": 1,
+          "lease_id": null,
+          "invoice_id": 501,
+          "status": "open",
+          "notes": "Needs a tee in size S.",
+          "created_at": "2026-08-31T09:15:00-04:00"
+        },
+        "recorded_in_output": {
+          "id": 101,
+          "type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty": 1,
+          "lease_id": null,
+          "invoice_id": 501,
+          "status": "open",
+          "notes": "Needs a tee in size S.",
+          "created_at": "2026-08-31T09:15:00-04:00"
+        },
+        "match": true
+      },
+      {
+        "check": "101.stock_for_requested_size == inventory CC-TEE-WHITE S",
+        "expected_from_db": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        },
+        "recorded_in_output": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        },
+        "match": true
+      },
+      {
+        "check": "101.other_sizes_in_stock == inventory CC-TEE-WHITE other sizes",
+        "expected_from_db": [
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "L",
+            "qty": 3,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "M",
+            "qty": 5,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "XL",
+            "qty": 2,
+            "location": "Aisle B"
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "L",
+            "qty": 3,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "M",
+            "qty": 5,
+            "location": "Aisle B"
+          },
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "XL",
+            "qty": 2,
+            "location": "Aisle B"
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "101.linked_invoice fields == invoices row 501",
+        "expected_from_db": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840.0,
+          "due_date": "2026-08-28",
+          "status": "open",
+          "description": "Rush reprint CC-TEE-WHITE S"
+        },
+        "recorded_in_output": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840,
+          "due_date": "2026-08-28",
+          "status": "open",
+          "description": "Rush reprint CC-TEE-WHITE S"
+        },
+        "match": true
+      },
+      {
+        "check": "101.linked_invoice.days_overdue == date_today - due_date",
+        "expected_from_db": 3,
+        "recorded_in_output": 3,
+        "match": true
+      },
+      {
+        "check": "101.linked_invoice.vendor fields == vendors row 1",
+        "expected_from_db": {
+          "id": 1,
+          "name": "Bulldog Print Co",
+          "specialty": "apparel reprint",
+          "lead_days": 5
+        },
+        "recorded_in_output": {
+          "id": 1,
+          "name": "Bulldog Print Co",
+          "specialty": "apparel reprint",
+          "lead_days": 5
+        },
+        "match": true
+      },
+      {
+        "check": "101.vendor.unpaid_invoices == open invoices for vendor 1",
+        "expected_from_db": [
+          {
+            "id": 501,
+            "vendor_id": 1,
+            "amount": 840.0,
+            "due_date": "2026-08-28",
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S"
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "id": 501,
+            "vendor_id": 1,
+            "amount": 840,
+            "due_date": "2026-08-28",
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S"
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "101.vendor.blocked_from_dispatch == (open invoices exist)",
+        "expected_from_db": true,
+        "recorded_in_output": true,
+        "match": true
+      },
+      {
+        "check": "101.shortfall_qty == qty - on hand",
+        "expected_from_db": 1,
+        "recorded_in_output": 1,
+        "match": true
+      },
+      {
+        "check": "102.shop_date == desk.date_today",
+        "expected_from_db": "2026-08-31",
+        "recorded_in_output": "2026-08-31",
+        "match": true
+      },
+      {
+        "check": "102.ticket == tickets row 102",
+        "expected_from_db": {
+          "id": 102,
+          "type": "rent_notice",
+          "requester": "Elm City Properties",
+          "subject": "Rent due",
+          "sku": null,
+          "size": null,
+          "qty": null,
+          "lease_id": 1,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Email: shop rent due in 2 days.",
+          "created_at": "2026-08-31T11:05:00-04:00"
+        },
+        "recorded_in_output": {
+          "id": 102,
+          "type": "rent_notice",
+          "requester": "Elm City Properties",
+          "subject": "Rent due",
+          "sku": null,
+          "size": null,
+          "qty": null,
+          "lease_id": 1,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Email: shop rent due in 2 days.",
+          "created_at": "2026-08-31T11:05:00-04:00"
+        },
+        "match": true
+      },
+      {
+        "check": "102.lease == leases row 1",
+        "expected_from_db": {
+          "id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400.0,
+          "next_due": "2026-09-02",
+          "notes": null
+        },
+        "recorded_in_output": {
+          "id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400,
+          "next_due": "2026-09-02",
+          "notes": null
+        },
+        "match": true
+      },
+      {
+        "check": "102.amount_due == leases.monthly_rent",
+        "expected_from_db": 2400.0,
+        "recorded_in_output": 2400,
+        "match": true
+      },
+      {
+        "check": "102.days_until_due == next_due - date_today",
+        "expected_from_db": 2,
+        "recorded_in_output": 2,
+        "match": true
+      },
+      {
+        "check": "102.is_overdue == next_due < date_today",
+        "expected_from_db": false,
+        "recorded_in_output": false,
+        "match": true
+      },
+      {
+        "check": "102.cash_accounts fields == cash_accounts rows",
+        "expected_from_db": [
+          {
+            "name": "checking",
+            "balance": 3400.0,
+            "date": "2026-08-31"
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "name": "checking",
+            "balance": 3400,
+            "date": "2026-08-31"
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "102.checking.can_cover_rent == balance >= rent",
+        "expected_from_db": true,
+        "recorded_in_output": true,
+        "match": true
+      },
+      {
+        "check": "102.checking.balance_after_rent == balance - rent",
+        "expected_from_db": 1000.0,
+        "recorded_in_output": 1000,
+        "match": true
+      },
+      {
+        "check": "102.total_cash == sum of balances",
+        "expected_from_db": 3400.0,
+        "recorded_in_output": 3400,
+        "match": true
+      },
+      {
+        "check": "103.shop_date == desk.date_today",
+        "expected_from_db": "2026-08-31",
+        "recorded_in_output": "2026-08-31",
+        "match": true
+      },
+      {
+        "check": "103.ticket == tickets row 103",
+        "expected_from_db": {
+          "id": 103,
+          "type": "price_override",
+          "requester": "Yale AI Club",
+          "subject": "Bulk hoodie discount",
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "qty": 20,
+          "lease_id": null,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+          "created_at": "2026-08-31T16:55:00-04:00"
+        },
+        "recorded_in_output": {
+          "id": 103,
+          "type": "price_override",
+          "requester": "Yale AI Club",
+          "subject": "Bulk hoodie discount",
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "qty": 20,
+          "lease_id": null,
+          "invoice_id": null,
+          "status": "open",
+          "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+          "created_at": "2026-08-31T16:55:00-04:00"
+        },
+        "match": true
+      },
+      {
+        "check": "103.pricing.unit_cost == pricing.unit_cost",
+        "expected_from_db": 22.0,
+        "recorded_in_output": 22,
+        "match": true
+      },
+      {
+        "check": "103.pricing.list_price == pricing.list_price",
+        "expected_from_db": 58.0,
+        "recorded_in_output": 58,
+        "match": true
+      },
+      {
+        "check": "103.pricing.margin_per_unit_at_list",
+        "expected_from_db": 36.0,
+        "recorded_in_output": 36,
+        "match": true
+      },
+      {
+        "check": "103.pricing.margin_pct_at_list",
+        "expected_from_db": 62.07,
+        "recorded_in_output": 62.07,
+        "match": true
+      },
+      {
+        "check": "103.pricing.order_cost_total",
+        "expected_from_db": 440.0,
+        "recorded_in_output": 440,
+        "match": true
+      },
+      {
+        "check": "103.pricing.order_revenue_at_list",
+        "expected_from_db": 1160.0,
+        "recorded_in_output": 1160,
+        "match": true
+      },
+      {
+        "check": "103.pricing.discount_pct_vs_list @48",
+        "expected_from_db": 17.24,
+        "recorded_in_output": 17.24,
+        "match": true
+      },
+      {
+        "check": "103.pricing.margin_per_unit_at_proposed @48",
+        "expected_from_db": 26.0,
+        "recorded_in_output": 26,
+        "match": true
+      },
+      {
+        "check": "103.pricing.order_revenue_at_proposed @48",
+        "expected_from_db": 960.0,
+        "recorded_in_output": 960,
+        "match": true
+      },
+      {
+        "check": "103.pricing.order_margin_at_proposed @48",
+        "expected_from_db": 520.0,
+        "recorded_in_output": 520,
+        "match": true
+      },
+      {
+        "check": "103.stock_for_requested_size == inventory CC-HOOD-NAVY M",
+        "expected_from_db": {
+          "sku": "CC-HOOD-NAVY",
+          "name": "Basic Hoodie Big Yale",
+          "size": "M",
+          "qty": 8,
+          "location": "Aisle A"
+        },
+        "recorded_in_output": {
+          "sku": "CC-HOOD-NAVY",
+          "name": "Basic Hoodie Big Yale",
+          "size": "M",
+          "qty": 8,
+          "location": "Aisle A"
+        },
+        "match": true
+      },
+      {
+        "check": "103.other_sizes_in_stock == inventory CC-HOOD-NAVY other sizes",
+        "expected_from_db": [
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "L",
+            "qty": 14,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "S",
+            "qty": 4,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "XL",
+            "qty": 6,
+            "location": "Aisle A"
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "L",
+            "qty": 14,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "S",
+            "qty": 4,
+            "location": "Aisle A"
+          },
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "XL",
+            "qty": 6,
+            "location": "Aisle A"
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "103.shortfall_qty == qty - on hand",
+        "expected_from_db": 12,
+        "recorded_in_output": 12,
+        "match": true
+      },
+      {
+        "check": "103.vendors fields == vendors rows",
+        "expected_from_db": [
+          {
+            "id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5
+          },
+          {
+            "id": 2,
+            "name": "Elm City Gifts",
+            "specialty": "mugs and small goods",
+            "lead_days": 3
+          },
+          {
+            "id": 3,
+            "name": "QuickShip CT",
+            "specialty": "local courier",
+            "lead_days": 1
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5
+          },
+          {
+            "id": 2,
+            "name": "Elm City Gifts",
+            "specialty": "mugs and small goods",
+            "lead_days": 3
+          },
+          {
+            "id": 3,
+            "name": "QuickShip CT",
+            "specialty": "local courier",
+            "lead_days": 1
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "103.vendor 1 unpaid_invoices == open invoices",
+        "expected_from_db": [
+          {
+            "id": 501,
+            "vendor_id": 1,
+            "amount": 840.0,
+            "due_date": "2026-08-28",
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S"
+          }
+        ],
+        "recorded_in_output": [
+          {
+            "id": 501,
+            "vendor_id": 1,
+            "amount": 840,
+            "due_date": "2026-08-28",
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S"
+          }
+        ],
+        "match": true
+      },
+      {
+        "check": "103.vendor 1 blocked_from_dispatch",
+        "expected_from_db": true,
+        "recorded_in_output": true,
+        "match": true
+      },
+      {
+        "check": "103.vendor 2 unpaid_invoices == open invoices",
+        "expected_from_db": [],
+        "recorded_in_output": [],
+        "match": true
+      },
+      {
+        "check": "103.vendor 2 blocked_from_dispatch",
+        "expected_from_db": false,
+        "recorded_in_output": false,
+        "match": true
+      },
+      {
+        "check": "103.vendor 3 unpaid_invoices == open invoices",
+        "expected_from_db": [],
+        "recorded_in_output": [],
+        "match": true
+      },
+      {
+        "check": "103.vendor 3 blocked_from_dispatch",
+        "expected_from_db": false,
+        "recorded_in_output": false,
+        "match": true
+      }
+    ]
+  }
+}

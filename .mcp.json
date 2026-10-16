@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "campus-customs": {
+      "type": "stdio",
+      "command": ".venv/bin/python",
+      "args": ["-m", "mcp_server.server"],
+      "env": {
+        "PYTHONPATH": ".",
+        "CAMPUS_CUSTOMS_DB": "data/campus_customs_new.db"
+      }
+    }
+  }
+}
